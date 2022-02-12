@@ -16,11 +16,25 @@ import javax.persistence.UniqueConstraint;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
+/*
+ * On utilise l'annotation @Table pour spécifier le nom de la table dans la BDD
+ * On indique également les contraintes d'unicité : 
+ * 	- Un username ne peut être présent qu'UNE SEULE FOIS, si on cherche à le mettre 2 fois => exception SQL
+ * 	- Un email ne peut être présent qu'UNE SEULE FOIS, si on cherche à le mettre 2 fois => exception SQL
+ */
 @Table(	name = "user", 
 uniqueConstraints = { 
 		@UniqueConstraint(columnNames = "username"),
 		@UniqueConstraint(columnNames = "email") 
 	})
+/*
+ * Plutôt que de créer une autre class UserDetailsImpl, on l'implémente directement dans notre ENTITY
+ * Comme nos rôles sont utilisés en tant que "autorities" par Spring, on va les nommer comme ça.
+ * Pas besoin de méthode static BUILD étant donné que notre entity USER est EGALEMENT un UserDetails (l'implémente)
+ * 
+ * On pourrait aussi utiliser les méthodes natives de UserDetails pour bloquer un compte, désactiver un compte, etc
+ * Mais on ne le fera pas ici : ces méthodes retourneront "true" par defaut (compte non bloqué, non désactivé, etc)
+ */
 public class User implements UserDetails {
 	
 	@Id

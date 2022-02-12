@@ -7,6 +7,13 @@ import javax.persistence.Id;
 
 import org.springframework.security.core.GrantedAuthority;
 
+/*
+ * Role représentera les rôles dont a besoin Spring Security et donc implémentera GrantedAuthority
+ * Pour que Spring puisse les comprendre nativement.
+ * 
+ * Quand nous implementons GrantedAuthority, on nous demande d'avoir une méthode "getAuthority" qui va chercher le nom du rôle
+ * On suppose donc que le nom du rôle est une propriété authority, on la nomme donc comme ça au lieu de "name"
+ */
 @Entity
 public class Role implements GrantedAuthority {
 	

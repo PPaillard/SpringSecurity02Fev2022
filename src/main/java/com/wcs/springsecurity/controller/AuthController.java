@@ -81,10 +81,11 @@ public class AuthController {
 		Authentication authentication =  authenticationManager.authenticate(
 				 new UsernamePasswordAuthenticationToken(userAuthDto.getUsername(), userAuthDto.getPassword()));
 		
-		// Spring nous fournis l'utilisateur connecté dans l'objet authentication via
-		// la méthode getPrincipal()
-		// Spring gère plusieurs méthodes : nous devons donc caster le résultat en type UserDetailsImpl
+		// Spring nous fournis l'utilisateur connecté dans l'objet authentication via la méthode getPrincipal()
+		// On peut la "caster" directement en User, puisque User implémente UserDetails
 		User user = (User) authentication.getPrincipal();
+		
+		// Plus besoin de convertir les rôles, ils sont bons directement, on retourne le username, les rôles (authorities) et le token
 		
 		return new AuthResponseDto(
 				user.getUsername(),

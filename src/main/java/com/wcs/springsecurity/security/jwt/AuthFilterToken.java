@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.wcs.springsecurity.entity.User;
 import com.wcs.springsecurity.security.service.UserDetailsServiceImpl;
 
 public class AuthFilterToken extends OncePerRequestFilter {
@@ -24,6 +25,13 @@ public class AuthFilterToken extends OncePerRequestFilter {
 	@Autowired
 	UserDetailsServiceImpl userDetailsServiceImpl;
 
+	/*
+	 * Méthode qui est appellé quand un utilisateur appelle une ressource en étant connecté
+	 * On doit donc verifié si un token est présent, et s'il est présent on va le valider
+	 * Et placer l'utilisateur connecté à un endroit ou on peut le récupèrer tout au long du traitement de l'appel
+	 * 
+	 * Si aucun token n'est présent, aucun traitement n'est effectué.
+	 */
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
@@ -38,12 +46,12 @@ public class AuthFilterToken extends OncePerRequestFilter {
 				// Décoder token && recupèrer le user
 				String username = jwtUtils.getUsernameFromToken(token);
 				
-				// recupèrer le user dans la DB
-				UserDetails userDetails =  userDetailsServiceImpl.loadUserByUsername(username);
+				// recupèrer le user dans la DB (plus besoin de UserDetails
+				User user =  userDetailsServiceImpl.loadUserByUsername(username);
 				
 				// on enregistre notre user qque part pour pouvoir le recup potentiellement plus tard
 				UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-						userDetails, null, userDetails.getAuthorities());
+						user, null, user.getAuthorities());
 				auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 				// On donne a Spring le contexte de sécurité dans lequel s'executer
 				SecurityContextHolder.getContext().setAuthentication(auth);
@@ -60,7 +68,7 @@ public class AuthFilterToken extends OncePerRequestFilter {
 		
 		String authorization = request.getHeader("Authorization");
 		
-		// "Authorization = 'Bearer jHghiJKhgioUoh.Hgoihmhu.jhuiytgouyigou'"
+		// Si une authorization est présente, qu'elle commence bien par Bearer, on renvoi la chaine de caractères qui suis.
 		if(authorization != null && authorization.startsWith("Bearer ")) {
 			return authorization.substring(7);
 		}

@@ -37,9 +37,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.antMatchers("/articles").permitAll()
 			.antMatchers("/users").authenticated();
 		
+		// On demande d'appliquer un filtre avant que chaque requête envoyée a l'API soit executer 
+		// (Celle qui permet de savoir si un token est présent dans la requête et s'il est présent, d'auth le user)
 		http.addFilterBefore(getAuthTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 	
+	/*
+	 * On indique à Spring quel service utiliser pour recupèrer son UserDetails (utilisateur avec les rôles etc qu'il pourra authentifier)
+	 * On lui spécifie quel encodeur on veut utiliser (la méthode passwordEncode() renvoi un encodeur BCrypt)
+	 */
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());

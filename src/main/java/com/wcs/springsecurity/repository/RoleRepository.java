@@ -9,5 +9,8 @@ import com.wcs.springsecurity.entity.Role;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
+	/*
+	 * Comme le nom est devenu une propriété authority, on doit modifier le findByName par findByAuthority
+	 */
 	Optional<Role> findByAuthority(String authority);
 }
