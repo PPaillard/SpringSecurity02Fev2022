@@ -14,10 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.wcs.springsecurity.security.service.UserDetailsImpl;
 import com.wcs.springsecurity.security.service.UserDetailsServiceImpl;
-
-import io.jsonwebtoken.Jwts;
 
 public class AuthFilterToken extends OncePerRequestFilter {
 	

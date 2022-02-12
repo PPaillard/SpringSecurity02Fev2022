@@ -1,21 +1,20 @@
 package com.wcs.springsecurity.entity;
 
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.springframework.security.core.GrantedAuthority;
+
 @Entity
-public class Role {
+public class Role implements GrantedAuthority {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Enumerated(EnumType.STRING)
-	private ERole name;
+	private String authority;
 
 	public Long getId() {
 		return id;
@@ -25,12 +24,14 @@ public class Role {
 		this.id = id;
 	}
 
-	public ERole getName() {
-		return name;
+	@Override
+	public String getAuthority() {
+		// TODO Auto-generated method stub
+		return this.authority;
 	}
 
-	public void setName(ERole name) {
-		this.name = name;
+	public void setAuthority(String authority) {
+		this.authority = authority;
 	}
 	
 	

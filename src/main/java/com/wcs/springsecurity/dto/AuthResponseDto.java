@@ -2,12 +2,14 @@ package com.wcs.springsecurity.dto;
 
 import java.util.List;
 
+import com.wcs.springsecurity.entity.Role;
+
 public class AuthResponseDto {
 	private String username;
-	private List<String> roles;
+	private List<Role> roles;
 	private String token;
 	
-	public AuthResponseDto(String username, List<String> roles, String token) {
+	public AuthResponseDto(String username, List<Role> roles, String token) {
 		this.username = username;
 		this.roles = roles;
 		this.token = token;
@@ -21,11 +23,11 @@ public class AuthResponseDto {
 		this.username = username;
 	}
 
-	public List<String> getRoles() {
+	public List<Role> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(List<String> roles) {
+	public void setRoles(List<Role> roles) {
 		this.roles = roles;
 	}
 

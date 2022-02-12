@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +27,6 @@ import com.wcs.springsecurity.entity.User;
 import com.wcs.springsecurity.repository.RoleRepository;
 import com.wcs.springsecurity.repository.UserRepository;
 import com.wcs.springsecurity.security.jwt.JWTUtils;
-import com.wcs.springsecurity.security.service.UserDetailsImpl;
 
 @RestController
 @CrossOrigin
@@ -67,12 +64,12 @@ public class AuthController {
 		user.setPassword(passwordEncoder.encode(userDto.getPassword()) );
 		
 		// on va chercher le role user pour le mettre par defaut à chaque personne s'enregistrant
-		Role role = roleRepository.findByName(ERole.ROLE_USER)
+		Role role = roleRepository.findByAuthority(ERole.ROLE_USER.name())
 				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 		// on doit associer une liste de role à un utilisateur, donc on en créé une et on y ajoute le role USER
-		List<Role> roles = new ArrayList<Role>();
+		List<Role> roles = new ArrayList<>();
 		roles.add(role);
-		user.setRoles(roles);
+		user.setAuthorities(roles);
 		// on save le user avec toutes les données précedentes
 		userRepository.save(user);
 	}
@@ -87,17 +84,11 @@ public class AuthController {
 		// Spring nous fournis l'utilisateur connecté dans l'objet authentication via
 		// la méthode getPrincipal()
 		// Spring gère plusieurs méthodes : nous devons donc caster le résultat en type UserDetailsImpl
-		UserDetailsImpl userDetailsImpl = (UserDetailsImpl) authentication.getPrincipal();
-		
-		
-		List<String> roles = new ArrayList<>();
-		for(SimpleGrantedAuthority simpleGrantedAuthority : userDetailsImpl.getAuthorities()) {
-			roles.add(simpleGrantedAuthority.getAuthority());
-		}
+		User user = (User) authentication.getPrincipal();
 		
 		return new AuthResponseDto(
-				userDetailsImpl.getUsername(),
-				roles,
-				jwtUtils.generateToken(userDetailsImpl));
+				user.getUsername(),
+				user.getAuthorities(),
+				jwtUtils.generateToken(user));
 	}
 }

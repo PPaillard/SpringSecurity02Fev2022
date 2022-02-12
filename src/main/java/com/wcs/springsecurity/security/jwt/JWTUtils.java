@@ -5,7 +5,7 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.wcs.springsecurity.security.service.UserDetailsImpl;
+import com.wcs.springsecurity.entity.User;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -23,10 +23,10 @@ public class JWTUtils {
 	@Value("${wcslyon.app.jwtSecret}")
 	private String secretKey;
 	
-	public String generateToken(UserDetailsImpl userDetailsImpl) {
+	public String generateToken(User user) {
 		
 		// on construit le token grace au user name, date /h actuelle, date d'expiration & clé d'encodage
-		return Jwts.builder().setSubject(userDetailsImpl.getUsername())
+		return Jwts.builder().setSubject(user.getUsername())
 			.setIssuedAt(new Date())
 			.setExpiration(new Date((new Date()).getTime() + expirationMs))
 			.signWith(SignatureAlgorithm.HS512, secretKey)
